@@ -52,8 +52,9 @@ Route::prefix('posts')->group(function () {
     Route::post('/', [PostController::class, 'create']);
     Route::put('/{id}', [PostController::class, 'update']);
     Route::delete('/{id}', [PostController::class, 'delete']);
-});
+    Route::post('/posts/{post}/like', 'PostController@like');
 
+});
 
 ///////////////////Beats////////////////////////////////////
 
@@ -73,8 +74,12 @@ Route::get('beats/{beat}/premium-file', [BeatController::class, 'servePremiumFil
 Route::prefix('likes')->group(function () {
     Route::get('/', [LikeController::class, 'index']);
     Route::get('/{id}', [LikeController::class, 'show']);
-
-    Route::post('/{post}/like', [LikeController::class, 'likePost']);
-    Route::post('/{beat}/like', [LikeController::class, 'likeBeat']);
+    Route::post('/posts/{postId}/like',  [LikeController::class,  'likePost']);
+    Route::post('/beats/{beatId}/like',  [LikeController::class,  'likeBeat']);
+   // Route::post('/{post}/like', [LikeController::class, 'likePost']);
+   // Route::post('/{beat}/like', [LikeController::class, 'likeBeat']);
+    Route::delete('/{id}', [LikeController::class, 'delete']);
 
 });
+Route::post('/posts/{postId}/like',  [LikeController::class,  'likePost']);
+Route::post('/beats/{beatId}/like',  [LikeController::class,  'likeBeat']);

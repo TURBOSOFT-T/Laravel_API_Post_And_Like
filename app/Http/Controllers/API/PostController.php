@@ -46,6 +46,16 @@ class PostController extends BaseController
     }
 
 
+    public function like(Request $request, Post $post)
+    {
+        // Check if the user has already liked the post
+        if (!$post->likes()->where('user_id', auth()->user()->id)->exists()) {
+            $post->likes()->attach(auth()->user()->id);
+            return response()->json(['message' => 'Post liked successfully']);
+        }
+
+        return response()->json(['message' => 'You have already liked this post'], 422);
+    }
 
 
 

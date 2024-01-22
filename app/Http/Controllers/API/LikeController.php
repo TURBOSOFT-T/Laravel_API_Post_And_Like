@@ -6,6 +6,7 @@ use App\Models\Like;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Http\Requests\StoreLikeRequest;
 use App\Http\Requests\UpdateLikeRequest;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\Beat;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
@@ -53,7 +54,7 @@ class LikeController extends BaseController
 
 
 
-    
+
 
     public function likeBeat(Beat $beat)
     {
@@ -85,35 +86,20 @@ class LikeController extends BaseController
      * @param  \App\Http\Requests\StoreLikeRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+
+
+    public function delete($id)
     {
-        $request->validate([
-            'likeable_id' => 'required',
-            'likeable_type' => 'required|in:post,user',
-        ]);
 
-        $user = Auth::user();
-
-        $likeableId = $request->likeable_id;
-        $likeableType = $request->likeable_type;
-
-        // Check if the user has already liked this item
-        $existingLike = $user->likes()->where('likeable_id', $likeableId)
-            ->where('likeable_type', $likeableType)
-            ->first();
-
-        if ($existingLike) {
-            // User has already liked this item
-            return response()->json(['message' => 'User already liked this item'], 422);
+        try {
+            $res = Like::findOrFail($id)->delete();
+            return $this->sendResponse($res, 'deleted succssufly');
+        } catch (ModelNotFoundException $exception) {
+            return $this->getError('Id not found');
         }
-
-        $like = $user->likes()->create([
-            'likeable_id' => $likeableId,
-            'likeable_type' => $likeableType,
-        ]);
-
-        return response()->json(['message' => 'Like created successfully', 'data' => $like], 201);
     }
+
+
 
 
 }
